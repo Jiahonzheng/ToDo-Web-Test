@@ -20,7 +20,7 @@ const router = new Router({
   scrollBehavior: () => ({y: 0}),
   routes: [
     route('/login', 'Login', 'login'),
-    route('/error', 'Error', 'error'),
+    route('*', 'Error', 'error'),
     route('/', 'Main', null, [
       route('/unfinishedTasks', 'UnfinishedTasks', 'unfinishedTasks'),
       route('/supervisor', 'Supervisor', 'supervisor'),

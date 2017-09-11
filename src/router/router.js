@@ -1,14 +1,17 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-function route (path, file, name, children, redirect) {
+function route (path, file, name, children, requireAuth, redirect) {
   return {
     exact: true,
     path,
     name,
     children,
     redirect: redirect,
-    component: require(`../pages/${file}.vue`)
+    component: require(`../pages/${file}.vue`),
+    meta: {
+      requireAuth: requireAuth
+    }
   }
 }
 
@@ -19,29 +22,28 @@ const router = new Router({
   mode: 'hash',
   scrollBehavior: () => ({y: 0}),
   routes: [
-    route('/login', 'Login', 'login'),
-    route('*', 'Error', 'error'),
+    route('/login', 'Login', 'login', null, false),
+    route('*', 'Error', 'error', null, false),
     route('/', 'Main', null, [
-      route('/unfinishedTasks', 'UnfinishedTasks', 'unfinishedTasks'),
-      route('/supervisor', 'Supervisor', 'supervisor'),
-      route('/allTasks', 'AllTasks', 'allTasks')
-    ], '/unfinishedTasks')
+      route('/unfinishedTasks', 'UnfinishedTasks', 'unfinishedTasks', null, true),
+      route('/supervisor', 'Supervisor', 'supervisor', null, true),
+      route('/allTasks', 'AllTasks', 'allTasks', null, true)], true, '/unfinishedTasks')
   ]
 })
 
 router.beforeEach((to, from, next) => {
-  /*
-  if (!localStorage.getItem('userName')) {
-    global.store.dispatch('checkPageTitle', to.path)
-    next()
+  if (to.meta.requireAuth) {
+    if (localStorage.getItem('userName') !== 'undefined') {
+      global.store.dispatch('checkPageTitle', to.path)
+      next()
+    } else {
+      next({
+        path: '/login'
+      })
+    }
   } else {
-    this.$router.push({
-      path: '/login'
-    })
+    next()
   }
-  */
-  global.store.dispatch('checkPageTitle', to.path)
-  next()
 })
 
 export default router

@@ -18,6 +18,9 @@ helper.localStorageManager = {
       value = JSON.parse(value)
     }
     return value
+  },
+  clear () {
+    storage.clear()
   }
 }
 

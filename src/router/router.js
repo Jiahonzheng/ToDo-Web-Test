@@ -33,13 +33,13 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (to.meta.requireAuth) {
-    if (localStorage.getItem('userName') !== 'undefined') {
-      global.store.dispatch('checkPageTitle', to.path)
-      next()
-    } else {
+    if (!localStorage.getItem('userName')) {
       next({
         path: '/login'
       })
+    } else {
+      global.store.dispatch('checkPageTitle', to.path)
+      next()
     }
   } else {
     next()

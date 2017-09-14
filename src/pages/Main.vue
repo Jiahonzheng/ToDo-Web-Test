@@ -2,14 +2,12 @@
   <v-app :dark="dark" standalone="standalone">
     <v-navigation-drawer v-model="drawer" persistent light overflow :dark="dark" enable-resize-watcher>
       <div class="pa-3 text-xs-center" v-show="!mini">
-        <div class="display-2 py-4">Adminify</div>
-        <p>{{'An admin dashboard based on Vuetify'}}</p>
+        <div class="display-2 py-4">{{userName}}</div>
         <div style="padding-left:5em;">
           <v-switch :label="(!dark ? 'Light' : 'Dark') + ' Theme'" v-model="dark" :dark="dark" hide-details="hide-details"></v-switch>
         </div>
         <div>
-          <v-btn dark="dark" tag="a" href="https://github.com/wxs77577/adminify" primary="primary">
-            <v-icon left="left" dark="dark">star</v-icon>
+          <v-btn dark="dark" tag="a" @click="logout" primary="primary">
             <span>注销</span></v-btn>
         </div>
       </div>
@@ -55,7 +53,7 @@
 
 <script>
   import {mapState} from 'vuex'
-
+  import menu from '../modules/menu'
   export default {
     data () {
       return {
@@ -67,14 +65,21 @@
       }
     },
     computed: {
-      ...mapState(['message', 'menu', 'pageTitle'])
+      ...mapState(['message', 'menu', 'pageTitle', 'userName'])
     },
     methods: {
       fetchMenu () {
+      },
+      logout () {
+        this.$store.dispatch('clearAuth')
+        this.$router.push({path: '/login'})
       }
     },
     created () {
       this.fetchMenu()
+      this.$store.commit('setMenu', menu)
+      this.$store.dispatch('checkPageTitle', this.$route.path)
+      this.$store.dispatch('checkAuth')
     }
   }
 </script>

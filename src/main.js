@@ -5,7 +5,6 @@ import App from './App.vue'
 import router from './router/router'
 import helper from './modules/helper'
 import store from './store/store'
-import menu from './modules/menu'
 import Vuetify from 'vuetify'
 import 'vuetify/src/stylus/main.styl'
 import 'vuetify/src/stylus/settings/_colors.styl'
@@ -26,10 +25,5 @@ new Vue({
     back () {
       this.$router.go(-1)
     }
-  },
-  created () {
-    this.$store.commit('setMenu', menu)
-    this.$store.dispatch('checkPageTitle', this.$route.path)
-    this.$store.dispatch('checkAuth')
   }
 })

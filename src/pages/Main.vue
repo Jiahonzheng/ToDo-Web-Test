@@ -68,18 +68,15 @@
       ...mapState(['message', 'menu', 'pageTitle', 'userName'])
     },
     methods: {
-      fetchMenu () {
-      },
       logout () {
         this.$store.dispatch('clearAuth')
         this.$router.push({path: '/login'})
       }
     },
     created () {
-      this.fetchMenu()
+      this.$store.dispatch('checkAuth')
       this.$store.commit('setMenu', menu)
       this.$store.dispatch('checkPageTitle', this.$route.path)
-      this.$store.dispatch('checkAuth')
     }
   }
 </script>

@@ -42,9 +42,13 @@
     methods: {
       onSignup () {
         console.log(this.userName + ' ' + this.userPassword)
-        // this.$router.push({path: '/'})
-        apiClient.post('http://127.0.0.1:3000/api', {userName: this.userName, userPassword: this.userPassword}).then((data) => {
-          console.log(data)
+        apiClient.post('/', {userName: this.userName, userPassword: this.userPassword}).then(({data}) => {
+          if (data.status === 1) {
+            this.$store.dispatch('setAuth', this.userName)
+            this.$router.push({path: '/'})
+          } else {
+            console.log(data)
+          }
         }).catch((error) => {
           console.log(error)
         })

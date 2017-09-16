@@ -4,8 +4,15 @@
       <v-layout column wrap>
           <v-flex xs12 v-for="task in tasks" :key="task.ID">
             <v-card>
-              <v-card-title primary-title>{{task.FROM}}</v-card-title>
-              <v-card-text>{{task.CONTENT}}</v-card-text>
+              <v-card-title primary-title>
+                <div class="headline">
+                  <span>{{task.FROM}}</span>
+                  <span>{{task.END}}</span>
+                </div>
+              </v-card-title>
+              <v-card-text>
+                <p class="headline">{{task.CONTENT}}</p>
+              </v-card-text>
             </v-card>
           </v-flex>
       </v-layout>

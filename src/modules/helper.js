@@ -32,6 +32,13 @@ helper.store = (key, value) => {
   }
 }
 
+helper.dateArithmetic = {
+  toLocal (utcString) {
+    var date = new Date(utcString)
+    return date.getUTCFullYear() + '-' + (date.getUTCMonth() + 1) + '-' + date.getUTCDate()
+  }
+}
+
 Vue.directive('back', (el, binding) => {
   el.onclick = () => window.history.go(-1)
 })

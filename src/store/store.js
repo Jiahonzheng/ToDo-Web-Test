@@ -9,9 +9,13 @@ const store = new Vuex.Store({
   state: {
     pageTitle: '未完成',
     menu: menu,
-    message: {
-      type: null,
-      body: null
+    tempTask: {
+      ID: null,
+      FROM: null,
+      TO: null,
+      CONTENT: null,
+      BEGIN: null,
+      END: null
     },
     userName: '',
     config: config
@@ -26,14 +30,17 @@ const store = new Vuex.Store({
     setPageTitle (state, data) {
       state.pageTitle = data
     },
-    setMessage (state, type, body) {
-      state.message = {type, body}
+    setTempTask (state, task) {
+      state.tempTask = task
     }
   },
   actions: {
     setAuth ({commit}, userName) {
       commit('setUserName', userName)
       global.helper.localStorageManager.set('userName', userName)
+    },
+    setTempTask ({commit}, task) {
+      commit('setTempTask', task)
     },
     checkAuth ({commit}) {
       let data = global.helper.localStorageManager.get('userName')
@@ -44,10 +51,17 @@ const store = new Vuex.Store({
       commit('setUserName', '')
     },
     checkPageTitle ({commit, state}, path) {
+      let temp = 0
       for (let i in state.menu) {
         if (state.menu[i].href === path) {
           commit('setPageTitle', state.menu[i].title)
+          temp = 1
           break
+        }
+      }
+      if (temp === 0) {
+        if (path.indexOf('/', 2) > -1) {
+          commit('setPageTitle', '详情')
         }
       }
     }

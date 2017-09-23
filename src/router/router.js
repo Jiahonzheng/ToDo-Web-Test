@@ -3,7 +3,6 @@ import Router from 'vue-router'
 
 function route (path, file, name, children, requireAuth, redirect) {
   return {
-    exact: true,
     path,
     name,
     children,
@@ -20,14 +19,16 @@ Vue.use(Router)
 const router = new Router({
   base: __dirname,
   mode: 'hash',
-  scrollBehavior: () => ({y: 0}),
   routes: [
     route('/login', 'Login', 'login', null, false),
     route('*', 'Error', 'error', null, false),
     route('/', 'Main', null, [
       route('/unfinishedTasks', 'UnfinishedTasks', 'unfinishedTasks', null, true),
+      route('/unfinishedTasks/:id', 'UnfinishedTasksDetails', 'unfinishedTasksDetails', null, true),
       route('/supervisor', 'Supervisor', 'supervisor', null, true),
-      route('/allTasks', 'AllTasks', 'allTasks', null, true)], true, '/unfinishedTasks')
+      route('/supervisor/:id', 'SupervisorDetails', 'supervisorDetails', null, true),
+      route('/allTasks', 'AllTasks', 'allTasks', null, true),
+      route('/allTasks/:id', 'AllTasksDetails', 'AllTasksDetails', null, true)], true, '/unfinishedTasks')
   ]
 })
 

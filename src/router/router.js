@@ -23,10 +23,12 @@ const router = new Router({
     route('/login', 'Login', 'login', null, false),
     route('*', 'Error', 'error', null, false),
     route('/', 'Main', null, [
+      route('/add', 'AddTask', 'addTask', null, true),
       route('/unfinishedTasks', 'UnfinishedTasks', 'unfinishedTasks', null, true),
       route('/unfinishedTasks/:id', 'UnfinishedTasksDetails', 'unfinishedTasksDetails', null, true),
       route('/supervisor', 'Supervisor', 'supervisor', null, true),
       route('/supervisor/:id', 'SupervisorDetails', 'supervisorDetails', null, true),
+      route('/supervisor/:id/edit', 'EditTask', 'editTask', null, true),
       route('/allTasks', 'AllTasks', 'allTasks', null, true),
       route('/allTasks/:id', 'AllTasksDetails', 'AllTasksDetails', null, true)], true, '/unfinishedTasks')
   ]

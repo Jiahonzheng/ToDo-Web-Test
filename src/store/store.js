@@ -18,7 +18,8 @@ const store = new Vuex.Store({
       END: null
     },
     userName: '',
-    config: config
+    config: config,
+    dark: false
   },
   mutations: {
     setUserName (state, data) {
@@ -32,6 +33,9 @@ const store = new Vuex.Store({
     },
     setTempTask (state, task) {
       state.tempTask = task
+    },
+    setDark (state, dark) {
+      state.dark = dark
     }
   },
   actions: {
@@ -42,6 +46,10 @@ const store = new Vuex.Store({
     setTempTask ({commit}, task) {
       commit('setTempTask', task)
     },
+    setDark ({commit}, dark) {
+      global.helper.localStorageManager.set('dark', dark)
+      commit('setDark', dark)
+    },
     checkAuth ({commit}) {
       let data = global.helper.localStorageManager.get('userName')
       commit('setUserName', data)
@@ -49,6 +57,10 @@ const store = new Vuex.Store({
     clearAuth ({commit}) {
       global.helper.localStorageManager.clear()
       commit('setUserName', '')
+    },
+    checkDark ({commit}) {
+      let dark = global.helper.localStorageManager.get('dark')
+      commit('setDark', dark)
     },
     checkPageTitle ({commit, state}, path) {
       let temp = 0
@@ -62,6 +74,10 @@ const store = new Vuex.Store({
       if (temp === 0) {
         if (path.indexOf('/', 2) > -1) {
           commit('setPageTitle', '详情')
+        } else {
+          if (path.indexOf('add') > -1) {
+            commit('setPageTitle', '发送')
+          }
         }
       }
     }

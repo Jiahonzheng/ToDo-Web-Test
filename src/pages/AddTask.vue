@@ -4,7 +4,17 @@
 
       <v-card>
         <v-card-title primary-title>
-          <div class="headline"> 送至： {{task.TO}}</div>
+          <div class="headline"> 来自： {{userName}}</div>
+        </v-card-title>
+      </v-card>
+
+      <v-card>
+        <v-card-title primary-title>
+
+            <div class="headline" height="0"><v-text-field name="taskTo" single-line v-model="task.TO"></v-text-field></div>
+
+          <!--<span>送至： <v-text-field name="taskTo" single-line></v-text-field></span>-->
+
         </v-card-title>
       </v-card>
 
@@ -32,6 +42,9 @@
       </v-card>
 
     </v-flex>
+
+    <v-snackbar :timeout="3000" :right="true" v-model="toastMessage.show">{{toastMessage.body}}</v-snackbar>
+
   </v-layout>
 </template>
 
@@ -41,26 +54,34 @@
     data () {
       return {
         task: {
-          ID: null,
           FROM: null,
           TO: null,
-          CONTENT: null,
-          BEGIN: null,
-          END: null
+          CONTENT: '123456',
+          BEGIN: '2017-9-22',
+          END: '2017-9-23'
+        },
+        toastMessage: {
+          body: null,
+          show: false
         }
       }
     },
-    methods: {
-      initDetailsFragment () {
-        this.task = this.tempTask
+    computed: {
+      ...mapState(['userName'])
+    },
+    watch: {
+      task: {
+        handler: function () {
+          this.$store.dispatch('setTempTask', this.task)
+        },
+        deep: true
       }
     },
-    computed: {
-      ...mapState(['tempTask'])
+    methods: {
     },
     created () {
       window.scrollTo(0, 0)
-      this.initDetailsFragment()
+      this.task.FROM = this.userName
     }
   }
 </script>

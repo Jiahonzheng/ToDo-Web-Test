@@ -4,7 +4,7 @@
 
       <v-card>
         <v-card-title primary-title>
-          <div class="headline"> 送至： {{task.TO}}</div>
+          <div class="headline" height="0"><v-text-field name="taskTO" single-line v-model="task.TO"></v-text-field></div>
         </v-card-title>
       </v-card>
 
@@ -16,7 +16,8 @@
 
       <v-card>
         <v-card-title primary-title>
-          <div class="headline"> 截止日期： {{task.END}}</div>
+          <!--<div class="headline"> 开始日期： {{task.BEGIN}}</div>-->
+          <div class="headline" height="0"><v-text-field name="taskEND" single-line v-model="task.END"></v-text-field></div>
         </v-card-title>
       </v-card>
 
@@ -32,8 +33,12 @@
       </v-card>
 
     </v-flex>
+
+    <v-snackbar :timeout="3000" :right="true" v-model="toastMessage.show">{{toastMessage.body}}</v-snackbar>
+
   </v-layout>
 </template>
+
 
 <script>
   import {mapState} from 'vuex'
@@ -47,6 +52,10 @@
           CONTENT: null,
           BEGIN: null,
           END: null
+        },
+        toastMessage: {
+          body: null,
+          show: false
         }
       }
     },
@@ -57,6 +66,14 @@
     },
     computed: {
       ...mapState(['tempTask'])
+    },
+    watch: {
+      task: {
+        handler: function () {
+          this.$store.dispatch('setTempTask', this.task)
+        },
+        deep: true
+      }
     },
     created () {
       window.scrollTo(0, 0)

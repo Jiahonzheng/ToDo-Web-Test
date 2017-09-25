@@ -9,7 +9,7 @@
           <v-switch :label="(!dark ? 'Light' : 'Dark') + ' Theme'" v-model="dark" :dark="dark" hide-details="hide-details"></v-switch>
         </div>
         <div>
-          <v-btn dark="dark" tag="a" @click.native.stop="logoutButtonPressed" primary="primary">
+          <v-btn dark="dark" @click.native.stop="logoutButtonPressed" primary="primary">
             <span>注销</span></v-btn>
         </div>
       </div>
@@ -38,7 +38,7 @@
 
     <v-toolbar class="darken-1" fixed="fixed" dark="dark" :class="theme">
 
-      <v-toolbar-side-icon v-if="isDetailsFragment" dark="dark" @click="backButtonPressed">
+      <v-toolbar-side-icon v-if="isDetailsFragment || isAddTaskFragment" dark="dark" @click="backButtonPressed">
         <v-icon>chevron_left</v-icon>
       </v-toolbar-side-icon>
 
@@ -49,19 +49,27 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon dark v-if="!isUnfinishedTasksDetailsFragment && !isSupervisorDetailsFragment && !isAllTasksDetailsFragment">
+      <v-btn icon dark v-if="!isUnfinishedTasksDetailsFragment && !isSupervisorDetailsFragment && !isAllTasksDetailsFragment && !isAddTaskFragment" @click="addButtonPressed">
         <v-icon>add</v-icon>
+      </v-btn>
+
+      <v-btn icon dark v-if="isAddTaskFragment" @click="addTask">
+        <v-icon>check</v-icon>
+      </v-btn>
+
+      <v-btn icon dark v-if="isEditTaskFragment" @click="editTask">
+        <v-icon>check</v-icon>
       </v-btn>
 
       <v-btn icon dark v-if="isUnfinishedTasksDetailsFragment" @click.native.stop="achieveButtonPressed">
         <v-icon>check</v-icon>
       </v-btn>
 
-      <v-btn icon dark v-if="isSupervisorDetailsFragment">
+      <v-btn icon dark v-if="isSupervisorDetailsFragment && !isEditTaskFragment" @click.native.stop="editButtonPressed">
         <v-icon>edit</v-icon>
       </v-btn>
 
-      <v-btn icon dark v-if="isSupervisorDetailsFragment" @click.native.stop="deleteButtonPressed">
+      <v-btn icon dark v-if="isSupervisorDetailsFragment && !isEditTaskFragment" @click.native.stop="deleteButtonPressed">
         <v-icon>delete</v-icon>
       </v-btn>
 
@@ -90,6 +98,17 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="logoutDialogMessage.show">
+      <v-card>
+        <v-card-title class="headline">{{logoutDialogMessage.body}}</v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn flat @click.native="logoutDialogMessage.show = false">取消</v-btn>
+          <v-btn flat @click.native="logout">确定</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-app>
 </template>
 
@@ -100,7 +119,6 @@
   export default {
     data () {
       return {
-        dark: false,
         theme: 'primary',
         mini: false,
         drawer: true,
@@ -111,11 +129,27 @@
         dialogMessage: {
           body: null,
           show: false
+        },
+        logoutDialogMessage: {
+          body: null,
+          show: false
         }
       }
     },
     computed: {
-      ...mapState(['menu', 'pageTitle', 'userName']),
+      ...mapState(['menu', 'pageTitle', 'userName', 'tempTask']),
+      isAddTaskFragment () {
+        if (this.$route.path.indexOf('add') > -1) {
+          return true
+        }
+        return false
+      },
+      isEditTaskFragment () {
+        if (this.$route.path.indexOf('edit') > -1) {
+          return true
+        }
+        return false
+      },
       isDetailsFragment () {
         return !!this.$route.params.id
       },
@@ -135,12 +169,62 @@
         if (this.$route.path.indexOf('allTasks') > -1 && this.$route.path.indexOf('/', 2) > -1) {
           return true
         }
-        console.log('hell')
         return false
+      },
+      dark: {
+        get: function () {
+          return this.$store.state.dark
+        },
+        set: function (dark) {
+          this.$store.dispatch('setDark', dark)
+        }
       }
     },
     methods: {
+      addTask () {
+        let self = this
+        console.log(1)
+        apiClient.post('/send', {FROM: this.tempTask.FROM, TO: this.tempTask.TO, CONTENT: this.tempTask.CONTENT, BEGIN: this.tempTask.BEGIN, END: this.tempTask.END}).then(function ({data}) {
+          if (data.status === 1) {
+            self.toastMessage.body = '成功发送任务'
+            self.toastMessage.show = true
+          } else {
+            self.toastMessage.body = '请与管理员联系'
+            self.toastMessage.show = true
+          }
+        }).catch(function (error) {
+          self.toastMessage.body = '请与管理员联系'
+          self.toastMessage.show = true
+          console.log(error)
+        })
+        this.$router.go(-1)
+      },
+      editTask () {
+        let self = this
+        console.log(1)
+        apiClient.post('/update', {ID: this.tempTask.ID, TO: this.tempTask.TO, CONTENT: this.tempTask.CONTENT, END: this.tempTask.END}).then(function ({data}) {
+          if (data.status === 1) {
+            self.toastMessage.body = '成功编辑任务'
+            self.toastMessage.show = true
+          } else {
+            self.toastMessage.body = '请与管理员联系'
+            self.toastMessage.show = true
+          }
+        }).catch(function (error) {
+          self.toastMessage.body = '请与管理员联系'
+          self.toastMessage.show = true
+          console.log(error)
+        })
+        this.$router.go(-2)
+      },
+      addButtonPressed () {
+        this.$router.push({path: '/add'})
+      },
       logoutButtonPressed () {
+        this.logoutDialogMessage.show = true
+        this.logoutDialogMessage.body = '确定注销？'
+      },
+      logout () {
         this.$store.dispatch('clearAuth')
         this.$router.push({path: '/login'})
       },
@@ -150,6 +234,10 @@
       achieveButtonPressed () {
         this.dialogMessage.show = true
         this.dialogMessage.body = '确定完成此项任务？'
+      },
+      editButtonPressed () {
+        let id = this.$route.params.id
+        this.$router.push({path: `/supervisor/${id}/edit`})
       },
       deleteButtonPressed () {
         this.dialogMessage.show = true
@@ -201,6 +289,7 @@
     },
     created () {
       this.$store.dispatch('checkAuth')
+      this.$store.dispatch('checkDark')
       this.$store.commit('setMenu', menu)
       this.$store.dispatch('checkPageTitle', this.$route.path)
     }

@@ -72,11 +72,13 @@ const store = new Vuex.Store({
         }
       }
       if (temp === 0) {
-        if (path.indexOf('/', 2) > -1) {
+        if (path.indexOf('/', 2) > -1 && !(path.indexOf('edit') > -1)) {
           commit('setPageTitle', '详情')
         } else {
           if (path.indexOf('add') > -1) {
             commit('setPageTitle', '发送')
+          } else {
+            commit('setPageTitle', '编辑')
           }
         }
       }

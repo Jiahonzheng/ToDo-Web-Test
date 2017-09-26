@@ -34,8 +34,18 @@ helper.store = (key, value) => {
 
 helper.dateArithmetic = {
   toLocal (utcString) {
-    var date = new Date(utcString)
-    return date.getUTCFullYear() + '-' + (date.getUTCMonth() + 1) + '-' + date.getUTCDate()
+    var date
+    if (arguments.length === 0) {
+      date = new Date()
+    } else {
+      date = new Date(utcString)
+    }
+    return date.getUTCFullYear() + '-' + (date.getUTCMonth() + 1) + '-' + date.getDate()
+  },
+  between (begin, end) {
+    var beginDate = new Date(begin)
+    var endDate = new Date(end)
+    return parseInt(endDate - beginDate) / 1000 / 60 / 60 / 24
   }
 }
 

@@ -1,38 +1,41 @@
 <template>
-  <v-layout row>
-    <v-flex xs12 sm6 offset-sm3>
+<v-layout row>
+  <v-flex xs12 sm6 offset-sm3>
 
-      <v-card>
-        <v-card-title primary-title>
-          <div class="headline"> 送至： {{task.TO}}</div>
-        </v-card-title>
-      </v-card>
+    <v-card>
+      <v-card-text>
+        <div class="headline"> 送至： {{task.TO}}</div>
+      </v-card-text>
+    </v-card>
 
-      <v-card>
-        <v-card-title primary-title>
-          <div class="headline"> 开始日期： {{task.BEGIN}}</div>
-        </v-card-title>
-      </v-card>
+    <v-card>
+      <v-card-text>
+        <div style="font-size:24px;line-height:32px">
+          <label>开始日期：</label>
+          <input readonly style="outline:none;border-style:none;width:calc(100% - 128px)" v-model="task.BEGIN"></input>
+        </div>
+      </v-card-text>
+    </v-card>
 
-      <v-card>
-        <v-card-title primary-title>
-          <div class="headline"> 截止日期： {{task.END}}</div>
-        </v-card-title>
-      </v-card>
+    <v-card>
+      <v-card-text>
+        <div style="font-size:24px;line-height:32px">
+          <label>截止日期：</label>
+          <input readonly style="outline:none;border-style:none;width:calc(100% - 128px)" v-model="task.END"></input>
+        </div>
+      </v-card-text>
+    </v-card>
 
-      <v-card>
-        <v-card-title primary-title>
-          <div class="headline"> 内容：</div>
-        </v-card-title>
-        <v-card-text>
-          <p style="word-wrap: break-word" class="headline">
-            {{task.CONTENT}}
-          </p>
-        </v-card-text>
-      </v-card>
+    <v-card>
+      <v-card-text>
+        <div style="font-size:24px">
+          <textarea readonly rows="8" style="outline:none;border-style:none;width:100%" v-model="task.CONTENT"></textarea>
+        </div>
+      </v-card-text>
+    </v-card>
 
-    </v-flex>
-  </v-layout>
+  </v-flex>
+</v-layout>
 </template>
 
 <script>

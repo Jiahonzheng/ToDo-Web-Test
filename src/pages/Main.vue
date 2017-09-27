@@ -5,9 +5,9 @@
 
       <div class="pa-3 text-xs-center" v-show="!mini">
         <div class="display-2 py-4">{{userName}}</div>
-        <div style="padding-left:5em;">
+        <!-- <div style="padding-left:5em;">
           <v-switch :label="(!dark ? 'Light' : 'Dark') + ' Theme'" v-model="dark" :dark="dark" hide-details="hide-details"></v-switch>
-        </div>
+        </div> -->
         <div>
           <v-btn dark="dark" @click.native.stop="logoutButtonPressed" primary="primary">
             <span>注销</span></v-btn>
@@ -38,7 +38,7 @@
 
     <v-toolbar class="darken-1" fixed="fixed" dark="dark" :class="theme">
 
-      <v-toolbar-side-icon v-if="isDetailsFragment || isAddTaskFragment" dark="dark" @click="backButtonPressed">
+      <v-toolbar-side-icon v-if="isDetailsFragment || isAddTaskFragment || isEditTaskFragment" dark="dark" @click="backButtonPressed">
         <v-icon>chevron_left</v-icon>
       </v-toolbar-side-icon>
 
@@ -49,7 +49,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon dark v-if="!isUnfinishedTasksDetailsFragment && !isSupervisorDetailsFragment && !isAllTasksDetailsFragment && !isAddTaskFragment" @click="addButtonPressed">
+      <v-btn icon dark v-if="!isDetailsFragment && !isAddTaskFragment && !isEditTaskFragment" @click="addButtonPressed">
         <v-icon>add</v-icon>
       </v-btn>
 
@@ -61,7 +61,7 @@
         <v-icon>check</v-icon>
       </v-btn>
 
-      <v-btn icon dark v-if="isUnfinishedTasksDetailsFragment" @click.native.stop="achieveButtonPressed">
+      <v-btn icon dark v-if="isUnfinishedTasksDetailsFragment" @click.stop="achieveButtonPressed">
         <v-icon>check</v-icon>
       </v-btn>
 
@@ -69,7 +69,7 @@
         <v-icon>edit</v-icon>
       </v-btn>
 
-      <v-btn icon dark v-if="isSupervisorDetailsFragment && !isEditTaskFragment" @click.native.stop="deleteButtonPressed">
+      <v-btn icon dark v-if="isSupervisorDetailsFragment && !isEditTaskFragment" @click.stop="deleteButtonPressed">
         <v-icon>delete</v-icon>
       </v-btn>
 
@@ -183,21 +183,25 @@
     methods: {
       addTask () {
         let self = this
-        console.log(1)
-        apiClient.post('/send', {FROM: this.tempTask.FROM, TO: this.tempTask.TO, CONTENT: this.tempTask.CONTENT, BEGIN: this.tempTask.BEGIN, END: this.tempTask.END}).then(function ({data}) {
-          if (data.status === 1) {
-            self.toastMessage.body = '成功发送任务'
-            self.toastMessage.show = true
-          } else {
+        if (this.tempTask.TO && this.tempTask.CONTENT && this.tempTask.END) {
+          apiClient.post('/send', {FROM: this.tempTask.FROM, TO: this.tempTask.TO, CONTENT: this.tempTask.CONTENT, BEGIN: this.tempTask.BEGIN, END: this.tempTask.END}).then(function ({data}) {
+            if (data.status === 1) {
+              self.toastMessage.body = '成功发送任务'
+              self.toastMessage.show = true
+            } else {
+              self.toastMessage.body = '请与管理员联系'
+              self.toastMessage.show = true
+            }
+          }).catch(function (error) {
             self.toastMessage.body = '请与管理员联系'
             self.toastMessage.show = true
-          }
-        }).catch(function (error) {
-          self.toastMessage.body = '请与管理员联系'
+            console.log(error)
+          })
+          this.$router.go(-1)
+        } else {
+          self.toastMessage.body = '请检查输入格式'
           self.toastMessage.show = true
-          console.log(error)
-        })
-        this.$router.go(-1)
+        }
       },
       editTask () {
         let self = this
@@ -241,7 +245,7 @@
       },
       deleteButtonPressed () {
         this.dialogMessage.show = true
-        this.dialogMessage.body = '确定完成此项任务？'
+        this.dialogMessage.body = '确定删除此项任务？'
       },
       dialogHandler () {
         if (this.$route.path.indexOf('unfinishedTasks') > -1) {

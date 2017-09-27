@@ -3,32 +3,34 @@
     <v-flex xs12 sm6 offset-sm3>
 
       <v-card>
-        <v-card-title primary-title>
-          <div class="headline" height="0"><v-text-field name="taskTO" single-line v-model="task.TO"></v-text-field></div>
-        </v-card-title>
-      </v-card>
-
-      <v-card>
-        <v-card-title primary-title>
-          <div class="headline"> 开始日期： {{task.BEGIN}}</div>
-        </v-card-title>
-      </v-card>
-
-      <v-card>
-        <v-card-title primary-title>
-          <!--<div class="headline"> 开始日期： {{task.BEGIN}}</div>-->
-          <div class="headline" height="0"><v-text-field name="taskEND" single-line v-model="task.END"></v-text-field></div>
-        </v-card-title>
-      </v-card>
-
-      <v-card>
-        <v-card-title primary-title>
-          <div class="headline"> 内容：</div>
-        </v-card-title>
         <v-card-text>
-          <p style="word-wrap: break-word" class="headline">
-            {{task.CONTENT}}
-          </p>
+          <div class="headline"> 来自： {{task.FROM}}</div>
+        </v-card-text>
+      </v-card>
+
+      <v-card>
+        <v-card-text>
+          <div style="font-size:24px;line-height:32px">
+            <label>送至：</label>
+            <input style="outline:none;border-style:none;width:calc(100% - 80px)" v-model="task.TO" required autofocus></input>
+          </div>
+        </v-card-text>
+      </v-card>
+
+      <v-card>
+        <v-card-text>
+          <div style="font-size:24px;line-height:32px">
+            <label>截止日期：</label>
+            <input style="outline:none;border-style:none;width:calc(100% - 128px)" v-model="task.END"></input>
+          </div>
+        </v-card-text>
+      </v-card>
+
+      <v-card>
+        <v-card-text>
+          <div style="font-size:24px">
+            <textarea rows="8" placeholder="内容" style="outline:none;border-style:none;width:100%" v-model="task.CONTENT"></textarea>
+          </div>
         </v-card-text>
       </v-card>
 

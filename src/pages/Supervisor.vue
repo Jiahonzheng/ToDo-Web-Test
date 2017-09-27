@@ -1,8 +1,9 @@
 <template>
-  <v-layout row>
-    <v-flex xs12 sm6 offset-sm3>
-      <v-list two-line v-if="!!tasks.length">
-        <template v-for="(task, index) in tasks">
+<v-layout row>
+  <v-flex xs12 sm6 offset-sm3>
+    <v-list two-line v-if="!!tasks.length">
+      <template v-for="(task, index) in tasks">
+          <div v-bind:class="task.DEADLINE < 0 ? 'task_item_out_of_date' : task.DEADLINE <= 1 ? 'task_item_ddl_1' : task.DEADLINE <= 2 ? 'task_item_ddl_2': 'task_item_default' ">
           <v-list-tile :key="index" ripple>
 
             <v-list-tile-content @click="showDetailsFragment(task.ID, index)">
@@ -21,24 +22,25 @@
 
           </v-list-tile>
           <v-divider v-if="index + 1 < tasks.length"></v-divider>
+          </div>
         </template>
-      </v-list>
-    </v-flex>
+    </v-list>
+  </v-flex>
 
-    <v-snackbar :timeout="3000" :right="true" v-model="toastMessage.show">{{toastMessage.body}}</v-snackbar>
+  <v-snackbar :timeout="3000" :right="true" v-model="toastMessage.show">{{toastMessage.body}}</v-snackbar>
 
-    <v-dialog v-model="dialogMessage.show">
-      <v-card>
-        <v-card-title class="headline">{{dialogMessage.body}}</v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn flat @click.native="dialogMessage.show = false">取消</v-btn>
-          <v-btn flat @click.native="deleteSupervisedTask">确定</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+  <v-dialog v-model="dialogMessage.show">
+    <v-card>
+      <v-card-title class="headline">{{dialogMessage.body}}</v-card-title>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn flat @click.native="dialogMessage.show = false">取消</v-btn>
+        <v-btn flat @click.native="deleteSupervisedTask">确定</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 
-  </v-layout>
+</v-layout>
 </template>
 
 <script>
@@ -78,6 +80,7 @@
           for (var i = 0; i < data.length; i++) {
             data[i].BEGIN = global.helper.dateArithmetic.toLocal(data[i].BEGIN)
             data[i].END = global.helper.dateArithmetic.toLocal(data[i].END)
+            data[i].DEADLINE = global.helper.dateArithmetic.between(Date(), data[i].END)
             self.tasksList.push(data[i])
           }
           if (self.tasks.length === 0) {

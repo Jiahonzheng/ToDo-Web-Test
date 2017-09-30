@@ -12,7 +12,10 @@
         <v-card-text>
           <div style="font-size:24px;line-height:32px">
             <label>送至：</label>
-            <input style="outline:none;border-style:none;width:calc(100% - 80px)" v-model="task.TO" required autofocus></input>
+            <input style="outline:none;border-style:none;width:calc(100% - 80px)" v-model="task.TO" required autofocus list="usersName"></input>
+            <datalist id="usersName">
+              <option v-for="user in users">{{user.NAME}}</option>
+            </datalist>
           </div>
         </v-card-text>
       </v-card>
@@ -21,7 +24,7 @@
         <v-card-text>
           <div style="font-size:24px;line-height:32px">
             <label>截止日期：</label>
-            <input style="outline:none;border-style:none;width:calc(100% - 128px)" v-model="task.END"></input>
+            <input style="outline:none;border-style:none;width:calc(100% - 128px)"type="date" v-model="task.END"></input>
           </div>
         </v-card-text>
       </v-card>
@@ -43,6 +46,7 @@
 
 
 <script>
+  import apiClient from '../modules/apiClient'
   import {mapState} from 'vuex'
   export default {
     data () {
@@ -58,12 +62,26 @@
         toastMessage: {
           body: null,
           show: false
-        }
+        },
+        users: []
       }
     },
     methods: {
       initDetailsFragment () {
         this.task = this.tempTask
+      },
+      getUsers () {
+        let self = this
+        apiClient.post('/users', {userName: this.userName}).then(function ({data}) {
+          self.users = []
+          for (var i = 0; i < data.length; i++) {
+            self.users.push(data[i])
+          }
+        }).catch(function (error) {
+          self.toastMessage.body = '请与管理员联系'
+          self.toastMessage.show = true
+          console.log(error)
+        })
       }
     },
     computed: {
@@ -80,6 +98,7 @@
     created () {
       window.scrollTo(0, 0)
       this.initDetailsFragment()
+      this.getUsers()
     }
   }
 </script>

@@ -76,12 +76,6 @@
       }
     },
     methods: {
-      check () {
-        let toInput = document.getElementById('toInput')
-        if (toInput.validity.valueMissing) {
-          alert('Error')
-        }
-      },
       getUsers () {
         let self = this
         apiClient.post('/users', {userName: this.userName}).then(function ({data}) {

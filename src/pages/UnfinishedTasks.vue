@@ -28,7 +28,7 @@
     </v-list>
   </v-flex>
 
-  <v-snackbar :timeout="3000" :right="true" v-model="toastMessage.show">{{toastMessage.body}}</v-snackbar>
+  <v-snackbar :timeout="3000" :top="true" :success="toastMessage.success" :error="!toastMessage.success" v-model="toastMessage.show">{{toastMessage.body}}</v-snackbar>
 
   <v-dialog v-model="dialogMessage.show">
     <v-card>
@@ -53,7 +53,8 @@
         tasksList: [],
         toastMessage: {
           body: null,
-          show: false
+          show: false,
+          success: null
         },
         dialogMessage: {
           body: null,
@@ -84,16 +85,23 @@
             data[i].DEADLINE = global.helper.dateArithmetic.between(Date(), data[i].END)
             self.tasksList.push(data[i])
           }
-          if (self.tasks.length === 0) {
-            self.toastMessage.body = '暂无未完成任务'
-            self.toastMessage.show = true
+          if (data.status === 0) {
+            self.$store.dispatch('clearAuth')
+            self.$router.push({path: '/login'})
+          } else {
+            if (self.tasks.length === 0) {
+              self.toastMessage.body = '暂无未完成任务'
+              self.toastMessage.success = true
+              self.toastMessage.show = true
+            }
+            self.initScrollPosition()
           }
         }).catch(function (error) {
           self.toastMessage.body = '请与管理员联系'
+          self.toastMessage.success = false
           self.toastMessage.show = true
           console.log(error)
         })
-        this.initScrollPosition()
       },
       showDetailsFragment (id, index) {
         this.$store.dispatch('setTempTask', this.tasks[index])
@@ -114,14 +122,17 @@
         apiClient.post('/achieve', {ID: this.tempID}).then(({data}) => {
           if (data.status === 1) {
             self.toastMessage.body = '成功完成任务'
+            self.toastMessage.success = true
             self.toastMessage.show = true
             self.checkUnfinishedTasks()
           } else {
             self.toastMessage.body = '请与管理员联系'
+            self.toastMessage.success = false
             self.toastMessage.show = true
           }
         }).catch((error) => {
           self.toastMessage.body = '请与管理员联系'
+          self.toastMessage.success = false
           self.toastMessage.show = true
           console.log(error)
         })

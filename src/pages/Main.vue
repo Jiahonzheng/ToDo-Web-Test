@@ -85,7 +85,7 @@
       </v-container>
     </main>
 
-    <v-snackbar :timeout="3000" :right="true" v-model="toastMessage.show">{{toastMessage.body}}</v-snackbar>
+    <v-snackbar :timeout="3000" :top="true" :success="toastMessage.success" :error="!toastMessage.success" v-model="toastMessage.show">{{toastMessage.body}}</v-snackbar>
 
     <v-dialog v-model="dialogMessage.show">
       <v-card>
@@ -124,7 +124,8 @@
         drawer: true,
         toastMessage: {
           body: null,
-          show: false
+          show: false,
+          success: null
         },
         dialogMessage: {
           body: null,
@@ -183,23 +184,27 @@
     methods: {
       addTask () {
         let self = this
-        if (this.tempTask.TO && this.tempTask.CONTENT && this.tempTask.END) {
+        if (this.tempTask.TO && this.tempTask.CONTENT && this.tempTask.END && global.helper.dateArithmetic.between(this.tempTask.BEGIN, this.tempTask.END) >= 0) {
           apiClient.post('/send', {FROM: this.tempTask.FROM, TO: this.tempTask.TO, CONTENT: this.tempTask.CONTENT, BEGIN: this.tempTask.BEGIN, END: this.tempTask.END}).then(function ({data}) {
             if (data.status === 1) {
               self.toastMessage.body = '成功发送任务'
+              self.toastMessage.success = true
               self.toastMessage.show = true
             } else {
               self.toastMessage.body = '请与管理员联系'
+              self.toastMessage.success = false
               self.toastMessage.show = true
             }
           }).catch(function (error) {
             self.toastMessage.body = '请与管理员联系'
+            self.toastMessage.success = false
             self.toastMessage.show = true
             console.log(error)
           })
           this.$router.go(-1)
         } else {
-          self.toastMessage.body = '请检查输入格式'
+          self.toastMessage.body = '请检查输入'
+          self.toastMessage.success = false
           self.toastMessage.show = true
         }
       },
@@ -209,13 +214,16 @@
         apiClient.post('/update', {ID: this.tempTask.ID, TO: this.tempTask.TO, CONTENT: this.tempTask.CONTENT, END: this.tempTask.END}).then(function ({data}) {
           if (data.status === 1) {
             self.toastMessage.body = '成功编辑任务'
+            self.toastMessage.success = true
             self.toastMessage.show = true
           } else {
             self.toastMessage.body = '请与管理员联系'
+            self.toastMessage.success = false
             self.toastMessage.show = true
           }
         }).catch(function (error) {
           self.toastMessage.body = '请与管理员联系'
+          self.toastMessage.success = false
           self.toastMessage.show = true
           console.log(error)
         })
@@ -259,14 +267,17 @@
         apiClient.post('/achieve', {ID: this.$route.params.id}).then(({data}) => {
           if (data.status === 1) {
             self.toastMessage.body = '成功完成任务'
+            self.toastMessage.success = true
             self.toastMessage.show = true
             self.$router.go(-1)
           } else {
             self.toastMessage.body = '请与管理员联系'
+            self.toastMessage.success = false
             self.toastMessage.show = true
           }
         }).catch((error) => {
           self.toastMessage.body = '请与管理员联系'
+          self.toastMessage.success = false
           self.toastMessage.show = true
           console.log(error)
         })
@@ -277,14 +288,17 @@
         apiClient.post('/delete', {ID: this.$route.params.id}).then(({data}) => {
           if (data.status === 1) {
             self.toastMessage.body = '成功删除任务'
+            self.toastMessage.success = true
             self.toastMessage.show = true
             self.$router.go(-1)
           } else {
             self.toastMessage.body = '请与管理员联系'
+            self.toastMessage.success = false
             self.toastMessage.show = true
           }
         }).catch((error) => {
           self.toastMessage.body = '请与管理员联系'
+          self.toastMessage.success = false
           self.toastMessage.show = true
           console.log(error)
         })

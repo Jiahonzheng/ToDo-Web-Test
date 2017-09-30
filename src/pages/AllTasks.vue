@@ -7,8 +7,8 @@
           <v-list-tile :key="index" ripple>
 
             <v-list-tile-content @click="showDetailsFragment(task.ID, index)">
-              <v-list-tile-title>来自： {{task.FROM}} <v-spacer></v-spacer> 送至： {{task.TO}}</v-list-tile-title>
-              <v-list-tile-sub-title>{{task.CONTENT}}</v-list-tile-sub-title>
+              <v-list-tile-title id="header">来自： {{task.FROM}} <v-spacer></v-spacer> 送至： {{task.TO}}</v-list-tile-title>
+              <v-list-tile-sub-title id="content">{{task.CONTENT}}</v-list-tile-sub-title>
             </v-list-tile-content>
 
             <v-list-tile-action>
@@ -22,7 +22,7 @@
     </v-list>
   </v-flex>
 
-  <v-snackbar :timeout="3000" :right="true" v-model="toastMessage.show">{{toastMessage.body}}</v-snackbar>
+  <v-snackbar :timeout="3000" :top="true" :success="toastMessage.success" :error="!toastMessage.success" v-model="toastMessage.show">{{toastMessage.body}}</v-snackbar>
 
 </v-layout>
 </template>
@@ -35,7 +35,8 @@
         tasksList: [],
         toastMessage: {
           body: null,
-          show: false
+          show: false,
+          success: null
         }
       }
     },
@@ -69,16 +70,23 @@
             data[i].DEADLINE = global.helper.dateArithmetic.between(Date(), data[i].END)
             self.tasksList.push(data[i])
           }
-          if (self.tasks.length === 0) {
-            self.toastMessage.body = '暂无任务'
-            self.toastMessage.show = true
+          if (data.status === 0) {
+            self.$store.dispatch('clearAuth')
+            self.$router.push({path: '/login'})
+          } else {
+            if (self.tasks.length === 0) {
+              self.toastMessage.body = '暂无任务'
+              self.toastMessage.success = true
+              self.toastMessage.show = true
+            }
+            self.initScrollPosition()
           }
         }).catch(function (error) {
           self.toastMessage.body = '请与管理员联系'
+          self.toastMessage.success = false
           self.toastMessage.show = true
           console.log(error)
         })
-        this.initScrollPosition()
       }
     },
     created () {

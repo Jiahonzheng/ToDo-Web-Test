@@ -12,7 +12,7 @@
             </v-list-tile-content>
 
             <v-list-tile-action>
-              <v-list-tile-action-text>{{task.END}}</v-list-tile-action-text>
+              <v-list-tile-action-text  id="timestamp">{{task.END}}</v-list-tile-action-text>
               <span>
                 <v-btn icon fab @click.native.stop="deleteButtonPressed(task.ID)">
                   <v-icon>delete</v-icon>

@@ -35,6 +35,7 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
+  console.log(to)
   if (to.meta.requireAuth) {
     if (!localStorage.getItem('userName')) {
       next({
@@ -45,7 +46,13 @@ router.beforeEach((to, from, next) => {
       next()
     }
   } else {
-    next()
+    if (localStorage.getItem('userName')) {
+      next({
+        path: from.path
+      })
+    } else {
+      next()
+    }
   }
 })
 

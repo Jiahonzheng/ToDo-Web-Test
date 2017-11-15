@@ -1,6 +1,14 @@
-# todo-web
+# ToDo-Web
 
-> ToDo-Web
+> ToDo是一个多人待办事项管理应用
+
+## Demo
+
+Demo: [ToDo-Web](http://119.23.106.13)
+
+UserName: Peter / Susan / Patrick / Joyee / Jiahonzheng
+
+UserPassword: 123456
 
 ## Build Setup
 
@@ -18,4 +26,7 @@ npm run build
 npm run build --report
 ```
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## todos
+
++ 添加用户组管理
++ 界面逻辑的修改
